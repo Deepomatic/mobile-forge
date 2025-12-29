@@ -344,18 +344,18 @@ class Builder(ABC):
         }
         env.update(kwargs)
 
+        if self.cross_venv.sdk == "android":
+            cc_parts = cc.split("/")
+            env["NDK_ROOT"] = "/".join(cc_parts[: cc_parts.index("toolchains")])
+            env["ANDROID_ABI"] = self.cross_venv.arch
+            env["HOST_TRIPLET"] = self.cross_venv.platform_triplet
+
         script_vars = {
             **env,
             **self.cross_venv.scheme_paths,
             **self.cross_venv.sysconfig_data,
             "sysconfigdata_name": self.cross_venv.sysconfigdata_name,
         }
-
-        if self.cross_venv.sdk == "android":
-            cc_parts = cc.split("/")
-            env["NDK_ROOT"] = "/".join(cc_parts[: cc_parts.index("toolchains")])
-            env["ANDROID_ABI"] = self.cross_venv.arch
-            env["HOST_TRIPLET"] = self.cross_venv.platform_triplet
 
         # Set up any additional environment variables needed in the script environment.
         for key, value in self.package.meta["build"]["script_env"].items():
