@@ -351,18 +351,18 @@ class Builder(ABC):
             "sysconfigdata_name": self.cross_venv.sysconfigdata_name,
         }
 
+        if self.cross_venv.sdk == "android":
+            cc_parts = cc.split("/")
+            env["NDK_ROOT"] = "/".join(cc_parts[: cc_parts.index("toolchains")])
+            env["ANDROID_ABI"] = self.cross_venv.arch
+            env["HOST_TRIPLET"] = self.cross_venv.platform_triplet
+
         # Set up any additional environment variables needed in the script environment.
         for key, value in self.package.meta["build"]["script_env"].items():
             if key in ["LDFLAGS", "CFLAGS", "CPPFLAGS"]:
                 env[key] += " " + value
             else:
                 env[key] = str(value).format(**script_vars)
-
-        if self.cross_venv.sdk == "android":
-            cc_parts = cc.split("/")
-            env["NDK_ROOT"] = "/".join(cc_parts[: cc_parts.index("toolchains")])
-            env["ANDROID_ABI"] = self.cross_venv.arch
-            env["HOST_TRIPLET"] = self.cross_venv.platform_triplet
 
         # Add in some user environment keys that are useful
         for key in [
