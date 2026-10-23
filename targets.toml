@@ -1,0 +1,15 @@
+# Build targets for Deepomatic mobile native wheels.
+# Consumed by Deepomatic/mobile-inference tools/mobile-wheels (plan, build).
+# Must match the ABIs offline_inference ships through serious-python
+# (Android x86 is intentionally excluded).
+# Slice names use forge's "<sdk>:<arch>" notation (src/forge/cross.py).
+
+python = "3.12"
+
+[android]
+api_level = 24
+slices = ["android:arm64-v8a", "android:armeabi-v7a", "android:x86_64"]
+
+[ios]
+min_version = "13.0"
+slices = ["iphoneos:arm64", "iphonesimulator:arm64", "iphonesimulator:x86_64"]
